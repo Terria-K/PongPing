@@ -6,3 +6,4 @@
  - Up - Move Up
  - Down - Move Down
  - C - Enter
+ - ESC - Pause
