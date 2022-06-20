@@ -8,17 +8,12 @@ namespace PongPing;
 
 public class MainMenu : Scene
 {
-    private Texture2D playButtonTex;
-    private Texture2D quitButtonTex;
-
     public MainMenu(ContentManager content, Camera camera) : base(content, camera) {}
 
     public override void Ready(GraphicsDevice device)
     {
         var font = FontText.Create("Rubik-Regular", Content);
         var spriteFont = Content.Load<SpriteFont>("Rubik-Regular");
-        playButtonTex = TextureImporter.LoadImage(device, "ui/play-button.png");
-        quitButtonTex = TextureImporter.LoadImage(device, "ui/quit-button.png");
 
         var title = new Label(font);
         title.Text = "Pong Ping";

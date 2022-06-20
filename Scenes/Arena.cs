@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -22,6 +23,9 @@ public class Arena : Scene
     private Score scoreEnemy;
     private ShakerHandler shaker;
     private bool resetting;
+    private SoundEffect bounce;
+    private SoundEffect hit;
+    private SoundEffect[] explosion = new SoundEffect[4];
 #endregion
 
 #region User Interface
@@ -41,6 +45,12 @@ public class Arena : Scene
 
     public override void Ready(GraphicsDevice device)
     {
+        hit = Content.Load<SoundEffect>("sfx/hit");
+        bounce = Content.Load<SoundEffect>("sfx/bounce");
+        for (int i = 0; i < explosion.Length; i++) 
+        {
+            explosion[i] = Content.Load<SoundEffect>($"sfx/explosion{i + 1}");
+        }
         var batTexture = Content.Load<Texture2D>("bat");
         var ballTexture = Content.Load<Texture2D>("ball");
         workFlowEntity = new Entity();
@@ -93,9 +103,6 @@ public class Arena : Scene
 
     private void UserInterface(GraphicsDevice device) 
     {
-        var playButtonTex = TextureImporter.LoadImage(device, "ui/play-button.png");
-        var quitButtonTex = TextureImporter.LoadImage(device, "ui/quit-button.png");
-        var mainButtonTex = TextureImporter.LoadImage(device, "ui/menu-button.png");
         var scoreEnemyFontText = FontText.Create("Rubik-Regular", Content);
         var scorePlayerFontText = FontText.Create("Rubik-Regular", Content);
         fontText = FontText.Create("Rubik-Regular", Content);
@@ -196,11 +203,13 @@ public class Arena : Scene
         {
             ball.Position.Y = 1;
             ball.Velocity.Y *= -(1 + random.Next(-50, 150) * 0.01f);
+            bounce.Play();
         }
         if (ball.Position.Y > max.Y) 
         {
             ball.Position.Y = max.Y - 1;
             ball.Velocity.Y *= -(1 + random.Next(-50, 150) * 0.01f);
+            bounce.Play();
         }
     }
 
@@ -219,6 +228,7 @@ public class Arena : Scene
         if (ball.Position.X < -100) 
         {
             shaker.ShakeFor(0.1f);
+            PlayExplosion();
             scoreEnemy.ScoreOf = scoreEnemy.ScoreOf + 1;
             ball.Position = BallPosition;
             ball.Velocity = new Vector2(-1, 0);
@@ -226,6 +236,7 @@ public class Arena : Scene
         if (ball.Position.X > max.X) 
         {
             shaker.ShakeFor(0.1f);
+            PlayExplosion();
             scorePlayer.ScoreOf = scorePlayer.ScoreOf + 1;
             ball.Position = BallPosition;
             ball.Velocity = new Vector2(1, 0);
@@ -246,6 +257,7 @@ public class Arena : Scene
 
         void BallIntersected() 
         {
+            hit.Play();
             ball.Velocity.X *= -1;
             ball.Velocity.Y += 100 * 0.005f;
         }
@@ -255,5 +267,10 @@ public class Arena : Scene
     {
         OnPause -= Paused;
         base.Exit();
+    }
+
+    private void PlayExplosion() 
+    {
+        explosion[random.Next(0, 4)].Play();
     }
 }

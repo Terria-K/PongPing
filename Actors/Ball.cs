@@ -8,7 +8,8 @@ namespace PongPing;
 public class Ball : Entity 
 {
     protected Sprite Sprite;
-    private const float SpeedLimit = 1.0f;
+    private const float SpeedLimitX = 3f;
+    private const float SpeedLimitY = 1.0f;
     private BallHitbox hitbox;
     public Vector2 Velocity;
     public float Speed = 5.0f;
@@ -23,10 +24,8 @@ public class Ball : Entity
 
     public override void Update()
     {
-        if (Velocity.X >SpeedLimit) { Velocity.X =SpeedLimit; }
-        else if (Velocity.X < -SpeedLimit) { Velocity.X = -SpeedLimit; }        
-        if (Velocity.Y >SpeedLimit) { Velocity.Y =SpeedLimit; }
-        else if (Velocity.Y < -SpeedLimit) { Velocity.Y = -SpeedLimit; }        
+        Velocity.X = MathHelper.Clamp(Velocity.X, -SpeedLimitX, SpeedLimitX);
+        Velocity.Y = MathHelper.Clamp(Velocity.Y, -SpeedLimitY, SpeedLimitY);     
         Position.X += Velocity.X * Speed;
         Position.Y += Velocity.Y * Speed;
         base.Update();

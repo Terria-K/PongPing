@@ -14,6 +14,7 @@ public class PongPing : TeuriaEngine
 
     protected override SceneRenderer Init()
     {
+        IsMouseVisible = false;
         camera = new Camera();
         Scene = new MainMenu(Content, camera);
         return new SceneRenderer(Scene, camera, Color.Black);
